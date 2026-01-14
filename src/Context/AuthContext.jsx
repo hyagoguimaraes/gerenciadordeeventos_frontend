@@ -18,17 +18,15 @@ export function AuthProvider({ children }) {
   async function login({ email, senha }) {
     try {
       const response = await authService.login({ email, senha });
-      console.log("Resposta da API:", response.data);
+      console.log("Dados recebidos no login:", response.data);
+      const { token, id } = response.data;
 
-      const { token } = response.data;
-
-      if (!token) {
-        console.error("ERRO: Token não encontrado");
+      if (!token || !id === undefined || id === null) {
+        console.error("ERRO! Token ou ID ausentes", { token, id });
         return;
       }
 
-      // Criamos o objeto user com o que temos (o email vindo do parâmetro)
-      const dadosAdministrador = { email }; 
+      const dadosAdministrador = { email, id }; 
 
       localStorage.setItem('authToken', token);
       localStorage.setItem('user', JSON.stringify(dadosAdministrador));
