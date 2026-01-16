@@ -1,10 +1,11 @@
 import { useState } from "react";
 import authService from './../../services/authService';
-import { Container, Form, ErrorMessage, SuccessMessage, ShowPasswordButton } from "./style";
+import { Container, Form, ShowPasswordButton, LogoContainer, PasswordWrapper } from "./style";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Eye, EyeOff, UserPlus } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, UserPlus, Sparkles } from "lucide-react";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
+import toast from "react-hot-toast";
 
 export function Cadastro() {
   const navigate = useNavigate();
@@ -14,10 +15,8 @@ export function Cadastro() {
     senha: "",
     confirmarSenha: "",
   });
-
   const [showSenha, setShowSenha] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState({ type: "", text: "" });
 
   function handleChange(event) {
     setForm({ ...form, [event.target.name]: event.target.value });
@@ -25,10 +24,9 @@ export function Cadastro() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    setMsg({ type: "", text: "" });
 
     if (form.senha !== form.confirmarSenha) {
-      setMsg({ type: "error", text: "As senhas não coincidem!" });
+      toast.error("As senhas não coincidem!");
       return;
     }
 
@@ -40,10 +38,10 @@ export function Cadastro() {
         senha: form.senha,
       });
 
-      setMsg({ type: "success", text: "Administrador cadastrado com sucesso!" });
+      toast.success("Conta criada com sucesso!");
       setTimeout(() => navigate("/login"), 2000);
     } catch (error) {
-      setMsg({ type: "error", text: "Erro ao cadastrar. E-mail já cadastrado no sistema!" });
+      toast.error("Erro ao cadastrar. Cadastro já existe!");
     } finally {
       setLoading(false);
     }
@@ -56,7 +54,11 @@ export function Cadastro() {
           <ArrowLeft size={18} /> Voltar
         </button>
 
-        <h1>Criar Conta</h1>
+        <LogoContainer>
+          <Sparkles size={32} strokeWidth={2.5} />
+          <h1>VibeCheck</h1>
+        </LogoContainer>
+
         <p>Cadastre um novo administrador para o sistema</p>
 
         <Input
@@ -75,19 +77,24 @@ export function Cadastro() {
           required
         />
 
-        <div style={{ position: 'relative' }}>
+        <PasswordWrapper>
           <Input
             type={showSenha ? "text" : "password"}
             name="senha"
-            placeholder="Senha"
+            placeholder="Senha (A senha deve conter no mínimo 6 digitos)"
             value={form.senha}
             onChange={handleChange}
             required
+            minLength={6}
           />
-          <ShowPasswordButton type="button" onClick={() => setShowSenha(!showSenha)}>
+          <ShowPasswordButton
+            type="button"
+            onClick={() => setShowSenha(!showSenha)}
+            data-tooltip={showSenha ? "Esconder senha" : "Ver senha"}
+          >
             {showSenha ? <EyeOff size={20} /> : <Eye size={20} />}
           </ShowPasswordButton>
-        </div>
+        </PasswordWrapper>
 
         <Input
           type="password"
@@ -98,14 +105,11 @@ export function Cadastro() {
           required
         />
 
-        {msg.type === "error" && <ErrorMessage>{msg.text}</ErrorMessage>}
-        {msg.type === "success" && <SuccessMessage>{msg.text}</SuccessMessage>}
-
         <Button type="submit" disabled={loading}>
           {loading ? "Cadastrando..." : (
             <>
               <UserPlus size={18} style={{ marginRight: "8px" }} />
-              Cadastrar Administrador
+              Criar conta
             </>
           )}
         </Button>

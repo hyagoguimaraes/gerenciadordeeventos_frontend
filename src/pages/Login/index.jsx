@@ -1,10 +1,11 @@
 import { useState, useContext, useEffect } from "react";
-import { Container, Form, RememberMeContainer, ShowPasswordButton } from "./style";
+import { Container, Form, RememberMeContainer, ShowPasswordButton, LogoContainer, PasswordWrapper, ErrorMessage } from "./style";
 import { useNavigate } from 'react-router-dom';
 import { Input } from './../../components/Input/index';
 import { Button } from './../../components/Button/index';
-import { Eye, EyeOff } from "lucide-react";
-import { AuthContext } from "../../Context/AuthContext";
+import { Eye, EyeOff, Sparkles } from "lucide-react";
+import { AuthContext } from "../../context/AuthContext";
+import toast from "react-hot-toast";
 
 export function Login() {
   const { login, user } = useContext(AuthContext);
@@ -14,7 +15,6 @@ export function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail');
@@ -27,17 +27,17 @@ export function Login() {
   async function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
-    setError("");
 
     try {
       await login({ email, senha });
+      toast.success(`Bem-vindo de volta!`);
       if (rememberMe) {
         localStorage.setItem('rememberedEmail', email);
       } else {
         localStorage.removeItem('rememberedEmail');
       }
     } catch (error) {
-      setError("Credenciais inválidas!");
+      toast.error("Credenciais inválidas! Verifique seu e-mail e senha.");
     } finally {
       setLoading(false);
     }
@@ -45,14 +45,17 @@ export function Login() {
 
   useEffect(() => {
     if (user) {
-      navigate("/eventos");
+      navigate("/home");
     }
   }, [user, navigate])
 
   return (
     <Container>
       <Form onSubmit={handleSubmit}>
-        <h1>Login</h1>
+        <LogoContainer>
+          <Sparkles size={40} strokeWidth={2.5} />
+          <h1>VibeCheck</h1>
+        </LogoContainer>
         <p>Acesse sua conta para gerenciar eventos</p>
 
         <Input
@@ -63,7 +66,7 @@ export function Login() {
           required
         />
 
-        <div style={{ position: 'relative' }}>
+        <PasswordWrapper>
           <Input
             type={showPassword ? "text" : "password"}
             placeholder="Sua Senha"
@@ -74,10 +77,11 @@ export function Login() {
           <ShowPasswordButton
             type="button"
             onClick={() => setShowPassword(!showPassword)}
+            data-tooltip={showPassword ? "Esconder senha" : "Ver senha"}
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </ShowPasswordButton>
-        </div>
+        </PasswordWrapper>
 
         <RememberMeContainer>
           <label>
@@ -89,8 +93,6 @@ export function Login() {
             Gravar e-mail
           </label>
         </RememberMeContainer>
-
-        {error && <span>{error}</span>}
 
         <Button type="submit" disabled={loading}>
           {loading ? "Autenticando..." : "Entrar"}
