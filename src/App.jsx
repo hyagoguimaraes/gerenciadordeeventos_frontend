@@ -1,13 +1,17 @@
 import { AppRoutes } from "../src/routes";
-import { AuthProvider } from "./Context/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 import { EventModalProvider } from "./context/EventModalContext";
+import { Toaster } from 'react-hot-toast';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <EventModalProvider>
-        <AppRoutes />
-      </EventModalProvider>
-    </AuthProvider>
+    <>
+      <Toaster position="top-center" reverseOrder={false} />
+      <AuthProvider>
+        <EventModalProvider>
+          <AppRoutes />
+        </EventModalProvider>
+      </AuthProvider>
+    </>
   )
 }

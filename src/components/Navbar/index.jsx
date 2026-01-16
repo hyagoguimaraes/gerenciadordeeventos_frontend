@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { NavLink, useNavigate } from 'react-router-dom';
-import { AuthContext } from './../../Context/AuthContext';
+import { AuthContext } from './../../context/AuthContext';
 import { Nav, Container, Logo, NavMenu, UserActions, LogoutButton } from "./style";
-import { Home, Calendar, PlusCircle, LogOut, User } from "lucide-react";
+import { Home, Calendar, PlusCircle, LogOut, User, Sparkles } from "lucide-react";
 import { EventModalContext } from "../../context/EventModalContext";
 
 export function Navbar() {
@@ -17,26 +17,29 @@ export function Navbar() {
 
   function handleNewEventClick(event) {
     event.preventDefault();
-    navigate('/eventos');
-    setTimeout(() => openModal(), 100);
+    if (window.location.pathname !== '/eventos') {
+      navigate('/eventos');
+    }
+    setTimeout(() => openModal(), 150);
   }
 
   return (
     <Nav>
       <Container>
         <Logo onClick={() => navigate("/home")}>
-          Eventos<span>Manager</span>
+          <Sparkles size={28} strokeWidth={2.5} />
+          VibeCheck
         </Logo>
 
         <NavMenu>
           <NavLink to="/home">
-            <Home size={18} /> Home
+            <Home size={20} /> Home
           </NavLink>
           <NavLink to="/eventos">
-            <Calendar size={18} /> Meus Eventos
+            <Calendar size={20} /> Meus Eventos
           </NavLink>
           <a href="#" onClick={handleNewEventClick}>
-            <PlusCircle size={18} /> Novo Evento
+            <PlusCircle size={20} /> <span>Novo Evento</span>
           </a>
         </NavMenu>
 
@@ -45,7 +48,7 @@ export function Navbar() {
             <User size={18} />
             <span>{user?.email?.split('@')[0]}</span>
           </div>
-          <LogoutButton onClick={handleLogout} title="Sair">
+          <LogoutButton onClick={handleLogout} data-tooltip="Sair da Conta">
             <LogOut size={18} />
           </LogoutButton>
         </UserActions>

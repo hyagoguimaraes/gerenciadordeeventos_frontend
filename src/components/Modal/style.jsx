@@ -70,7 +70,7 @@ export const CloseButton = styled.button`
   left: 16px;
   
   &:hover {
-    background: #f7f7f7;
-    color: #000;
+    background: #ff385c;
+    color: #fff;
   }
 `

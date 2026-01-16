@@ -1,3 +1,14 @@
+:root {
+  --primary: #222222;
+  --secondary: #717171;
+  --background: #f8f9fa;
+  --white: #ffffff;
+  --error: #e74c3c;
+  --border: #dddddd;
+  --radius: 8px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -5,18 +16,27 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif; /* Recomendo importar no index.html */
-  background-color: #f4f7fe;
-  color: #1a1a2e;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--background);
+  color: #1a1a1a;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
 button {
-  cursor: pointer;
-  border: none;
-  transition: filter 0.2s;
+  font-family: inherit;
 }
 
-button:hover {
-  filter: brightness(0.9);
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
 }

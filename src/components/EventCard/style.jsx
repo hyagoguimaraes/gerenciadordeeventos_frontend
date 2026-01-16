@@ -10,7 +10,7 @@ export const Card = styled.div`
 
 export const ImageContainer = styled.div`
   width: 100%;
-  aspect-ratio: 1 / 1; /* Card quadradinho estilo Airbnb */
+  aspect-ratio: 1 / 1;
   border-radius: 12px;
   overflow: hidden;
   position: relative;
@@ -53,7 +53,7 @@ export const ActionOverlay = styled.div`
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     
     &.edit { color: #222; }
-    &.delete { color: #FF385C; }
+    &.delete { color: #ff385c; }
     
     &:hover { transform: scale(1.1); }
   }

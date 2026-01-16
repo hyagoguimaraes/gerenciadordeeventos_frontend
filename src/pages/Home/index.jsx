@@ -1,14 +1,19 @@
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../Context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { Layout } from "../../components/Layout";
-import { HomeContainer, WelcomeSection, StatsGrid, StatCard, SectionHeader } from "./style";
+import { HomeContainer, WelcomeSection, StatsGrid, SectionHeader, EventsGrid, EmptyStateText, LoadingWrapper, ToastConfirmContainer } from "./style";
 import { Calendar, CheckCircle, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import eventService from "../../services/eventService";
 import { EventCard } from "../../components/EventCard";
+import { CardResumo } from "../../components/CardResumo";
+import { EventModalContext } from "../../context/EventModalContext";
+import { EventModal } from "../../components/EventModal";
+import toast from "react-hot-toast";
 
 export function Home() {
   const { user } = useContext(AuthContext);
+  const { openModal } = useContext(EventModalContext);
   const [stats, setStats] = useState({ total: 0, cidades: 0, proximos: [] });
   const [loading, setLoading] = useState(true);
 
@@ -23,24 +28,44 @@ export function Home() {
       setLoading(true);
       const response = await eventService.listar(user.id);
       const todosEventos = response.data;
+
       const total = todosEventos.length;
       const cidadesUnicas = new Set(todosEventos.map(event => event.cidade.toLowerCase())).size;
       const hoje = new Date();
+
       const proximos = todosEventos
         .filter(event => new Date(event.data) >= hoje)
         .sort((dia1, dia2) => new Date(dia1.data) - new Date(dia2.data))
         .slice(0, 3);
 
-      setStats({
-        total,
-        cidades: cidadesUnicas,
-        proximos
-      });
+      setStats({ total, cidades: cidadesUnicas, proximos });
     } catch (error) {
-      console.error("Erro ao carregar dados da Home", error);
+      toast.error("Erro ao carregar dados do painel.");
     } finally {
       setLoading(false);
     }
+  }
+
+  async function confirmarExclusao(id, toastId) {
+    toast.dismiss(toastId);
+    const loadingToast = toast.loading("Removendo...");
+    try {
+      await eventService.deletar(id);
+      await carregarDadosHome();
+      toast.success("Evento removido!", { id: loadingToast });
+    } catch (error) {
+      toast.error("Não foi possível excluir.", { id: loadingToast });
+    }
+  }
+
+  function handleDelete(id) {
+    toast((t) => (
+      <ToastConfirmContainer>
+        <span>Excluir este evento?</span>
+        <button className="confirm-btn" onClick={() => confirmarExclusao(id, t.id)}>Sim</button>
+        <button className="cancel-btn" onClick={() => toast.dismiss(t.id)}>Não</button>
+      </ToastConfirmContainer>
+    ), { duration: 5000 });
   }
 
   return (
@@ -52,29 +77,9 @@ export function Home() {
         </WelcomeSection>
 
         <StatsGrid>
-          <StatCard>
-            <div className="icon-box"><Calendar size={24} /></div>
-            <div className="text-box">
-              <h4>Total de Eventos</h4>
-              <strong>{stats.total}</strong>
-            </div>
-          </StatCard>
-
-          <StatCard>
-            <div className="icon-box"><CheckCircle size={24} /></div>
-            <div className="text-box">
-              <h4>Ativos</h4>
-              <strong>{stats.proximos.length}</strong>
-            </div>
-          </StatCard>
-
-          <StatCard>
-            <div className="icon-box"><MapPin size={24} /></div>
-            <div className="text-box">
-              <h4>Cidades</h4>
-              <strong>{stats.cidades}</strong>
-            </div>
-          </StatCard>
+          <CardResumo icon={Calendar} title="Total de Eventos" value={stats.total} />
+          <CardResumo icon={CheckCircle} title="Ativos" value={stats.proximos.length} />
+          <CardResumo icon={MapPin} title="Cidades" value={stats.cidades} />
         </StatsGrid>
 
         <section>
@@ -84,20 +89,28 @@ export function Home() {
           </SectionHeader>
 
           {loading ? (
-            <p>Carregando agenda...</p>
+            <LoadingWrapper>
+              <div className="loader"></div>
+              <p>Atualizando sua agenda...</p>
+            </LoadingWrapper>
           ) : stats.proximos.length > 0 ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
+            <EventsGrid>
               {stats.proximos.map(evento => (
-                <EventCard key={evento.id} evento={evento} />
+                <EventCard
+                  key={evento.id}
+                  evento={evento}
+                  onEdit={() => openModal(evento)}
+                  onDelete={() => handleDelete(evento.id)}
+                />
               ))}
-            </div>
+            </EventsGrid>
           ) : (
-            <p style={{ color: '#717171' }}>
-              Você ainda não tem eventos para os próximos dias.
-              <Link to="/eventos" style={{ color: '#ff385c', marginLeft: '5px' }}>Crie um agora!</Link>
-            </p>
+            <EmptyStateText>
+              Nenhum evento próximo. <Link to="/eventos">Crie um agora!</Link>
+            </EmptyStateText>
           )}
         </section>
+        <EventModal onSaveSuccess={carregarDadosHome} />
       </HomeContainer>
     </Layout>
   );
