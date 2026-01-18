@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, useMemo } from "react";
-import { AuthContext } from "../../Context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { EventModalContext } from "../../context/EventModalContext";
 import eventService from "../../services/eventService";
 import { Modal } from "../Modal";
@@ -7,7 +7,6 @@ import { Input } from "../Input";
 import { UploadCloud, Image as ImageIcon } from "lucide-react";
 import { Form, UploadSection, InputGroup, NumberInputContainer, QuickButtons, QuickButton, ErrorMessage, SubmitButton, FieldWrapper } from "./style"
 import toast from "react-hot-toast";
-
 
 export function EventModal({ onSaveSuccess }) {
   const { user } = useContext(AuthContext);

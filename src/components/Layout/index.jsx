@@ -1,4 +1,4 @@
-import { Navbar } from '../Navbar/index'; // Importação atualizada
+import { Navbar } from '../Navbar/index'; 
 import { LayoutWrapper, MainContent } from './style';
 
 export function Layout({ children }) {
