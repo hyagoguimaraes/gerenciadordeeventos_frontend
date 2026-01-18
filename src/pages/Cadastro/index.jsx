@@ -1,8 +1,8 @@
 import { useState } from "react";
 import authService from './../../services/authService';
-import { Container, Form, ShowPasswordButton, LogoContainer, PasswordWrapper } from "./style";
+import { Container, Form, ShowPasswordButton, LogoContainer, PasswordWrapper, PasswordRequirementList, RequirementItem } from "./style";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Eye, EyeOff, UserPlus, Sparkles } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, UserPlus, Sparkles, X, Check } from "lucide-react";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import toast from "react-hot-toast";
@@ -17,6 +17,15 @@ export function Cadastro() {
   });
   const [showSenha, setShowSenha] = useState(false);
   const [loading, setLoading] = useState(false);
+  const requirements = [
+    { label: "Mínimo 6 caracteres", met: form.senha.length >= 6 },
+    { label: "Uma letra maiúscula", met: /[A-Z]/.test(form.senha) },
+    { label: "Uma letra minúscula", met: /[a-z]/.test(form.senha) },
+    { label: "Um caractere especial (@#$%)", met: /[!@#$%^&*]/.test(form.senha) },
+    { label: "Um número", met: /[0-9]/.test(form.senha) },
+  ];
+
+  const isPasswordValid = requirements.every(req => req.met);
 
   function handleChange(event) {
     setForm({ ...form, [event.target.name]: event.target.value });
@@ -27,6 +36,11 @@ export function Cadastro() {
 
     if (form.senha !== form.confirmarSenha) {
       toast.error("As senhas não coincidem!");
+      return;
+    }
+
+    if (!isPasswordValid) {
+      toast.error("A senha não atende a todos os requisitos de segurança.");
       return;
     }
 
@@ -41,7 +55,7 @@ export function Cadastro() {
       toast.success("Conta criada com sucesso!");
       setTimeout(() => navigate("/login"), 2000);
     } catch (error) {
-      toast.error("Erro ao cadastrar. Cadastro já existe!");
+      toast.error(error.response?.data?.message || "Erro ao cadastrar.");
     } finally {
       setLoading(false);
     }
@@ -59,7 +73,7 @@ export function Cadastro() {
           <h1>VibeCheck</h1>
         </LogoContainer>
 
-        <p>Cadastre um novo administrador para o sistema</p>
+        <p>Crie sua conta</p>
 
         <Input
           name="nome"
@@ -85,8 +99,8 @@ export function Cadastro() {
             value={form.senha}
             onChange={handleChange}
             required
-            minLength={6}
           />
+
           <ShowPasswordButton
             type="button"
             onClick={() => setShowSenha(!showSenha)}
@@ -94,6 +108,8 @@ export function Cadastro() {
           >
             {showSenha ? <EyeOff size={20} /> : <Eye size={20} />}
           </ShowPasswordButton>
+          
+          
         </PasswordWrapper>
 
         <Input
@@ -105,7 +121,16 @@ export function Cadastro() {
           required
         />
 
-        <Button type="submit" disabled={loading}>
+        <PasswordRequirementList>
+            {requirements.map((req, index) => (
+              <RequirementItem key={index} $met={req.met}>
+                {req.met ? <Check size={14} /> : <X size={14} />}
+                {req.label}
+              </RequirementItem>
+            ))}
+          </PasswordRequirementList>
+
+        <Button type="submit" disabled={loading || isPasswordValid}>
           {loading ? "Cadastrando..." : (
             <>
               <UserPlus size={18} style={{ marginRight: "8px" }} />

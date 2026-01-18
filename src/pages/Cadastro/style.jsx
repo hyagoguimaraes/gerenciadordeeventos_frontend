@@ -87,7 +87,7 @@ export const PasswordWrapper = styled.div`
 export const ShowPasswordButton = styled.button`
   position: absolute;
   right: 12px;
-  top: 50%;
+  top: 24px;
   transform: translateY(-50%);
   background: none;
   border: none;
@@ -139,3 +139,26 @@ export const ShowPasswordButton = styled.button`
   }
 `;
 
+export const PasswordRequirementList = styled.div`
+  margin-top: 10px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+export const RequirementItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  color: ${props => props.$met ? '#2dcc70' : '#a0a0a0'};
+
+  svg {
+    color: ${props => props.$met ? '#2dcc70' : '#e0e0e0'};
+  }
+`;
