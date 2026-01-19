@@ -1,8 +1,8 @@
 import { useState } from "react";
 import authService from './../../services/authService';
-import { Container, Form, ShowPasswordButton, LogoContainer, PasswordWrapper, PasswordRequirementList, RequirementItem } from "./style";
+import { Container, Form, ShowPasswordButton, LogoContainer, PasswordWrapper, PasswordRequirementList, RequirementItem, ButtonContent } from "./style";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Eye, EyeOff, UserPlus, Sparkles, X, Check } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Sparkles, X, Check } from "lucide-react";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import toast from "react-hot-toast";
@@ -95,7 +95,7 @@ export function Cadastro() {
           <Input
             type={showSenha ? "text" : "password"}
             name="senha"
-            placeholder="Senha (A senha deve conter no mínimo 6 digitos)"
+            placeholder="Senha (Mínimo 6 caracteres)"
             value={form.senha}
             onChange={handleChange}
             required
@@ -130,12 +130,11 @@ export function Cadastro() {
             ))}
           </PasswordRequirementList>
 
-        <Button type="submit" disabled={loading || isPasswordValid}>
+        <Button type="submit" disabled={loading || !isPasswordValid}>
           {loading ? "Cadastrando..." : (
-            <>
-              <UserPlus size={18} style={{ marginRight: "8px" }} />
-              Criar conta
-            </>
+            <ButtonContent>
+              <span>Criar conta</span>
+            </ButtonContent>
           )}
         </Button>
       </Form>

@@ -18,15 +18,14 @@ export function AuthProvider({ children }) {
   async function login({ email, senha }) {
     try {
       const response = await authService.login({ email, senha });
-      console.log("Dados recebidos no login:", response.data);
-      const { token, id } = response.data;
+      const { nome, token, id } = response.data;
 
-      if (!token || !id === undefined || id === null) {
+      if (!token || id === undefined || id === null) {
         console.error("ERRO! Token ou ID ausentes", { token, id });
         return;
       }
 
-      const dadosAdministrador = { email, id }; 
+      const dadosAdministrador = { email, id, nome }; 
 
       localStorage.setItem('authToken', token);
       localStorage.setItem('user', JSON.stringify(dadosAdministrador));
