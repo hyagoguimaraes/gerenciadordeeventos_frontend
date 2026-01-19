@@ -36,7 +36,7 @@ export function Home() {
       const proximos = todosEventos
         .filter(event => new Date(event.data) >= hoje)
         .sort((dia1, dia2) => new Date(dia1.data) - new Date(dia2.data))
-        .slice(0, 3);
+        .slice(0, 5);
 
       setStats({ total, cidades: cidadesUnicas, proximos });
     } catch (error) {
@@ -72,7 +72,7 @@ export function Home() {
     <Layout>
       <HomeContainer>
         <WelcomeSection>
-          <h1>Bem-vindo de volta, {user?.email?.split('@')[0]}!</h1>
+          <h1>Bem-vindo de volta, {user?.nome || 'Usuário'}!</h1>
           <p>Você tem {stats.proximos.length} eventos agendados para os próximos dias.</p>
         </WelcomeSection>
 

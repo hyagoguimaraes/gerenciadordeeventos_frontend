@@ -87,18 +87,19 @@ export const PasswordWrapper = styled.div`
 export const ShowPasswordButton = styled.button`
   position: absolute;
   right: 12px;
-  top: 24px;
+  top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: #717171;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  transition: color 0.2s;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
 
   &:hover {
-    color: #ff385c;
+    color: #ff385C;
 
     &::after, &::before {
       opacity: 1;
@@ -110,18 +111,20 @@ export const ShowPasswordButton = styled.button`
   &::after {
     content: attr(data-tooltip);
     position: absolute;
-    top: -40px;
+    top: -42px;
     left: 50%;
     transform: translateX(-50%) translateY(10px);
     background-color: #ff385C;
     color: #fff;
-    padding: 5px 10px;
+    padding: 6px 12px;
     border-radius: 6px;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 500;
     white-space: nowrap;
     opacity: 0;
     visibility: hidden;
     transition: all 0.2s ease;
+    pointer-events: none;
   }
 
   &::before {
@@ -130,7 +133,7 @@ export const ShowPasswordButton = styled.button`
     top: -10px;
     left: 50%;
     transform: translateX(-50%) translateY(10px);
-    border-width: 5px;
+    border-width: 6px;
     border-style: solid;
     border-color: #ff385C transparent transparent transparent;
     opacity: 0;
@@ -161,4 +164,12 @@ export const RequirementItem = styled.div`
   svg {
     color: ${props => props.$met ? '#2dcc70' : '#e0e0e0'};
   }
+`;
+
+export const ButtonContent = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
 `;

@@ -46,7 +46,7 @@ export function Navbar() {
         <UserActions>
           <div className="user-badge">
             <User size={18} />
-            <span>{user?.email?.split('@')[0]}</span>
+            <span>{user?.nome || 'Usuário'}</span>
           </div>
           <LogoutButton onClick={handleLogout} data-tooltip="Sair da Conta">
             <LogOut size={18} />
